@@ -40,7 +40,10 @@ class MainActivity : Activity() {
             setRenderer(renderer)
             renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
         }
-        root.addView(glView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
+        root.addView(glView, FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        ))
 
         touch = TouchHandler(renderer, world) { glView.requestRender() }
         glView.setOnTouchListener(touch)
@@ -51,26 +54,47 @@ class MainActivity : Activity() {
                 Toast.makeText(this@MainActivity, "Selected: ${bt.label}", Toast.LENGTH_SHORT).show()
             }
         }
-        val pp = FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
-            gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-            bottomMargin = 16; leftMargin = 16; rightMargin = 16
-        }
+        val pp = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        pp.gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+        pp.bottomMargin = 16
+        pp.leftMargin = 16
+        pp.rightMargin = 16
         root.addView(palette, pp)
 
         val info = TextView(this).apply {
             text = "🏡 BlockVillage — Tap: place | Long-press: remove | Drag: rotate | Pinch: zoom+pan"
-            setTextColor(0xFFFFFFFF.toInt()); textSize = 12f
+            setTextColor(0xFFFFFFFF.toInt())
+            textSize = 12f
             setPadding(16, 12, 16, 12)
             setBackgroundColor(0xAA000000.toInt())
         }
-        root.addView(info, FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-            gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL; topMargin = 16
-        })
+        val ip = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        ip.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+        ip.topMargin = 16
+        root.addView(info, ip)
 
         setContentView(root)
     }
 
-    override fun onPause() { super.onPause(); glView.onPause(); WorldStorage.save(this, world) }
-    override fun onResume() { super.onResume(); glView.onResume() }
-    override fun onDestroy() { super.onDestroy(); WorldStorage.save(this, world) }
+    override fun onPause() {
+        super.onPause()
+        glView.onPause()
+        WorldStorage.save(this, world)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        glView.onResume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        WorldStorage.save(this, world)
+    }
 }
